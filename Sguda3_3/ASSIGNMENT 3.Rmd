@@ -1,0 +1,48 @@
+---
+title: "Assignment 3"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+date: "10-15-2023"
+author : "SAI ROHITH GUDA"
+---
+
+## The Transportation Model
+
+
+```{r}
+library(lpSolve)
+```
+
+## Define the cost matrix, production capacity, and demand:
+
+```{r}
+cost_matrix <- matrix(c(22, 14, 30, 16, 20, 24), nrow = 2, byrow = TRUE)
+production_capacity <- c(100, 120)
+demand <- c(80, 60, 70)
+```
+
+## Solve the transportation problem:
+
+```{r}
+solution <- lp(direction = "min",
+               objective.in = c(cost_matrix),
+               const.mat = rbind(diag(2), matrix(1, nrow = 3, ncol = 2)),
+               const.dir = c(rep("<=", 2), rep("=", 3)),
+               const.rhs = c(production_capacity, demand))
+
+```
+
+## Extract and print the optimal solution and minimum cost:
+
+```{r}
+optimal_solution <- solution$solution
+print(optimal_solution)
+
+min_cost <- solution$objval
+print(min_cost)
+```
+
+
+
