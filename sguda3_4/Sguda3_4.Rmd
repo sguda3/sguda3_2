@@ -1,0 +1,131 @@
+---
+title: "INTEGER PROGRAMMING ASSIGNMENT"
+author: "SAI ROHITH GUDA"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+date: "11-19-23"
+---
+AP is a package delivery service that assures overnight delivery in the continental United States.
+The firm operates hubs in key cities and airports around the country. Packages are received at hubs before being delivered to intermediate hubs or their final destination.
+
+The manager of the AP hub in Cleveland is concerned about labor expenses and is looking into alternatives.
+
+identifying the most effective strategy to schedule staff. The hub is open seven days a week and the amount of parcels handled changes from day to day.
+
+Minimum number of workers required each day
+
+Sunday 18 
+Monday 27 
+Tuesday 22
+Wednesday 26
+Thursday 25
+Friday 21 
+Saturday 19
+
+shifts constraints are 
+
+sunday : There are two  off, shifts 1 and 7, and the limitation is:
+0w1+1w2+ 1w3+ 1w4+ 1w5+ 1w6+ 0w7
+
+
+Monday : There are two  off's, shifts 1 and 2, and the limitation is
+0w1+0w2+ 1w3+ 1w4+ 1w5+ 1w6+ 1w7
+
+Tuesday :There are two  off's, shifts 2 and 3, and the limitation is
+1w1+0w2+ 0w3+ 1w4+ 1w5+ 1w6+ 1w7
+
+Wednesday: There are two  off's, shifts 3 and 4, and the limitation is
+1w1+ 1w2+ 0w3+ 0w4+ 1w5+ 1w6+ 1w7
+
+Thursday : There are two  off's, shifts 4 and 5, and the limitation is
+1w1+ 1w2+ 1w3+ 0w4+ 0w5+ 1w6+ 1w7
+
+Friday : There are two  off's, shifts 5 and 6, and the limitation is
+1w1+1w2+ 1w3+ 1w4+ 0w5+ 0w6+ 1w7
+
+Saturday : There are two  off's, shifts 6 and 7, and the limitation is:
+1w1+1w2+ 1w3+ 1w4+ 1w5+ 0w6+ 0w7
+
+
+```{r}
+# Install and load the lpSolve package
+if (!require(lpSolve)) {
+    install.packages("lpSolve")
+    library(lpSolve)
+}
+
+# Define the coefficients of the objective function (total wages for each shift)
+objective_coefficients <- c(775, 800, 800, 800, 800, 775, 750)
+
+# Define the constraints matrix
+# Each row corresponds to a day, and each column corresponds to a shift
+constraints <- matrix(c(
+    0, 1, 1, 1, 1, 1, 0, # Sunday
+    0, 0, 1, 1, 1, 1, 1, # Monday
+    1, 0, 0, 1, 1, 1, 1, # Tuesday
+    1, 1, 0, 0, 1, 1, 1, # Wednesday
+    1, 1, 1, 0, 0, 1, 1, # Thursday
+    1, 1, 1, 1, 0, 0, 1, # Friday
+    1, 1, 1, 1, 1, 0, 0  # Saturday
+), nrow = 7, byrow = TRUE)
+
+# Define the right-hand side of the constraints (workers required each day)
+constraints_rhs <- c(18, 27, 22, 26, 25, 21, 19)
+
+# Define the constraints direction (greater than or equal to)
+constraints_dir <- rep(">=", 7)
+
+# Define the integer constraint for each decision variable
+int_constraints <- rep(1, 7)
+
+# Solve the linear programming problem
+solution <- lp("min", objective_coefficients, constraints, constraints_dir, constraints_rhs, all.int = TRUE)
+
+# Output the solution
+if (solution$status == 0) {
+    print("Optimal solution found:")
+    print(solution$solution)
+    
+    cat("Total wage cost:", sum(solution$solution * objective_coefficients), "\n")
+} else {
+    print("Solution not found")
+}
+## substituting in the decision variables
+
+```
+```{r}
+
+ 
+    
+constraints <- matrix(c(
+    0, 4, 5, 0, 8, 1, 0, # Sunday
+    0, 0, 5, 0, 8, 1, 13, # Monday
+    2, 0, 0, 0, 8, 1, 13, # Tuesday
+    2, 4, 0, 0, 8, 1, 13, # Wednesday
+    2, 4, 5, 0, 0, 1, 13, # Thursday
+    2, 4, 5, 0, 0, 0, 13, # Friday
+    2, 4, 5, 0, 8, 0, 0  # Saturday
+), nrow = 7, byrow = TRUE)
+
+ row.names(constraints) <- c("sunday","monday","tuesday", "wednesday",
+                                "thursday", "friday", "saturday" )
+ colnames(constraints)<- c("Shift 1", "Shift 2", "Shift 3", "Shift 4", "Shift 5", "Shift 6", "Shift 7")
+
+    
+print(constraints)
+```
+
+
+
+```{r}
+
+    row.names(constraints) <- c("sunday","monday","tuesday", "wednesday",
+                                "thursday", "friday", "saturday" )
+    
+ rowSums(constraints)
+ #workers available for each day
+ # total wage expense is 25675
+
+```
